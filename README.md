@@ -6,8 +6,10 @@ An analytical mechatronics project implementing an absolute geometric Forward/In
 * **Kinematics Engine:** Custom implementation of analytical transformations mapping Cartesian Space coordinates directly to Joint Space positions ($\theta_1, \theta_2, d_3$).
 * **Motion Profile Optimization:** Joint space path generation executing smooth acceleration and deceleration curves to eliminate mechanical jerk.
 * **Virtual Testing Framework:** Built-in real-time 3D simulation engine mapping closed-loop path execution tasks.
+## Dynamic Velocity Profile Optimization
+Below is the optimized multi-axis performance tracking showing synchronized acceleration/deceleration profiles across the manipulator joints:
 
-
+![Trajectory Profile Optimization](motion_profile.png)
 
 ## Mathematical Formula Definitions
 The forward analytical workspace coordinates are derived explicitly via structural Denavit-Hartenberg (DH) parameters:
