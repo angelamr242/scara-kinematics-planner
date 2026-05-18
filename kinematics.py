@@ -2,7 +2,7 @@ import numpy as np
 
 class ScaraKinematics:
     def __init__(self, a1=0.5, a2=0.4):
-        # Link lengths in meters
+        #links lenght
         self.a1 = a1  
         self.a2 = a2  
 
@@ -15,13 +15,11 @@ class ScaraKinematics:
 
     def inverse_kinematics(self, x, y, z):
         """Calculates the [theta1, theta2, d3] joint states given an [X, Y, Z] target."""
-        # Calculate theta2 using the law of cosines
+        # using law of cosines
         cos_theta2 = (x**2 + y**2 - self.a1**2 - self.a2**2) / (2 * self.a1 * self.a2)
-        
         # Clamp value to prevent domain errors due to floating point math
         cos_theta2 = np.clip(cos_theta2, -1.0, 1.0) 
-        
-        # We choose the elbow-down configuration (negative root)
+        ##negative root implies downward elbow
         sin_theta2 = -np.sqrt(1 - cos_theta2**2) 
         theta2 = np.arctan2(sin_theta2, cos_theta2)
         
@@ -29,9 +27,20 @@ class ScaraKinematics:
         k1 = self.a1 + self.a2 * cos_theta2
         k2 = self.a2 * sin_theta2
         theta1 = np.arctan2(y, x) - np.arctan2(k2, k1)
-        
         # Calculate d3
         d3 = -z
+        def validate_workspace(self, x, y, z):
+    # Calculate the distance from the base origin
+        distance = np.sqrt(x**2 + y**2)
+        max_reach = self.a1 + self.a2
+        min_reach = abs(self.a1 - self.a2)
+        if distance > max_reach:
+            print(f"CRITICAL FAULT: Target [{x}, {y}] is outside maximum reach of {max_reach}m!")
+            return False
+        if distance < min_reach:
+            print(f"CRITICAL FAULT: Target [{x}, {y}] is in internal dead-zone!")
+            return False
+        return True
         
         return np.array([theta1, theta2, d3])
 
@@ -40,5 +49,5 @@ if __name__ == "__main__":
     robot = ScaraKinematics()
     target = [0.4, 0.3, -0.1]
     joints = robot.inverse_kinematics(*target)
-    print(f"Target XYZ: {target}")
-    print(f"Calculated Joints (th1, th2, d3): {np.round(joints, 3)}")
+    print(f"target XYZ: {target}")
+    print(f"calc joints (th1, th2, d3): {np.round(joints, 3)}")
