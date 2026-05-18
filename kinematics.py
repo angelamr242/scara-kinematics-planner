@@ -14,12 +14,23 @@ class ScaraKinematics:
         return np.array([x, y, z])
 
     def inverse_kinematics(self, x, y, z):
-        """Calculates the [theta1, theta2, d3] joint states given an [X, Y, Z] target."""
-        # using law of cosines
+        """Calculates the [theta1, theta2, d3] joint states given an [X, Y, Z] target with boundary validation."""
+        # Calculate distance from origin in the horizontal plane
+        distance = np.sqrt(x**2 + y**2)
+        max_reach = self.a1 + self.a2
+        min_reach = abs(self.a1 - self.a2)
+        
+        # Defensive Workspace Shield Validation
+        if distance > max_reach:
+            raise ValueError(f"Target [{x}, {y}] is OUTSIDE maximum reach boundary of {max_reach}m!")
+        if distance < min_reach:
+            raise ValueError(f"Target [{x}, {y}] sits within the inner dead-zone envelope!")
+
+        # Calculate theta2 using the law of cosines
         cos_theta2 = (x**2 + y**2 - self.a1**2 - self.a2**2) / (2 * self.a1 * self.a2)
-        # Clamp value to prevent domain errors due to floating point math
         cos_theta2 = np.clip(cos_theta2, -1.0, 1.0) 
-        ##negative root implies downward elbow
+        
+        # Elbow-down configuration solution selection
         sin_theta2 = -np.sqrt(1 - cos_theta2**2) 
         theta2 = np.arctan2(sin_theta2, cos_theta2)
         
@@ -27,9 +38,12 @@ class ScaraKinematics:
         k1 = self.a1 + self.a2 * cos_theta2
         k2 = self.a2 * sin_theta2
         theta1 = np.arctan2(y, x) - np.arctan2(k2, k1)
+        
         # Calculate d3
         d3 = -z
-        def validate_workspace(self, x, y, z):
+        
+        return np.array([theta1, theta2, d3])
+    def validate_workspace(self, x, y, z):
     # Calculate the distance from the base origin
         distance = np.sqrt(x**2 + y**2)
         max_reach = self.a1 + self.a2
