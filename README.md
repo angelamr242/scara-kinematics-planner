@@ -7,8 +7,7 @@ An analytical mechatronics project implementing an absolute geometric Forward/In
 * **Motion Profile Optimization:** Joint space path generation executing smooth acceleration and deceleration curves to eliminate mechanical jerk.
 * **Virtual Testing Framework:** Built-in real-time 3D simulation engine mapping closed-loop path execution tasks.
 
-## Mechanical Assembly Blueprint
-![Mechanical System Architecture Rendering](scara_cad.png)
+
 
 ## Mathematical Formula Definitions
 The forward analytical workspace coordinates are derived explicitly via structural Denavit-Hartenberg (DH) parameters:
